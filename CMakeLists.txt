@@ -17,6 +17,7 @@ set(SRC_DIR src)
 # Define o diretorio de saida
 set(BIN_DIR bin)
 
+# Define o diretorio de saida do executavel
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../${BIN_DIR}/${CMAKE_BUILD_TYPE})
 
 # Especifica os arquivos fonte para executavel principal

@@ -46,7 +46,7 @@ Ao executar o programa `ordena`, você precisa fornecer os seguintes parâmetros
 ordenados, **qualquer método de ordenação interna** apresentado em "Estrutura de Dados I".
     - `2`: **Intercalação balanceada** de vários caminhos (**2f fitas**) utilizando, na etapa de geração dos blocos 
 ordenados, a **técnica de seleção por substituição** apresentada em "Estrutura de Dados II".
-    - `3`:
+    - `3`: **Quicksort externo**.
 2. `<quantidade>`:
   - Define a quantidade de alunos (linhas do arquivo texto) a serem ordenados.
   - Deve ser um número inteiro positivo maior que 0.

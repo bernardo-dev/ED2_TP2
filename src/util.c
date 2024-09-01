@@ -46,3 +46,35 @@ bool processarEntrada(Entrada *entrada, int argc, char *argv[]) {
   // Se chegou ate aqui todos os argumentos sao validos
   return true;
 }
+
+FILE *abrirArquivoTexto(int situacao) {
+  FILE *arquivoTexto = NULL;
+  switch (situacao) {
+    case 1:
+      arquivoTexto = fopen("../../PROVAO.txt", "r");
+      break;
+    case 2:
+      arquivoTexto = fopen("../../PROVAO_ASCENDENTE.txt", "r");
+      break;
+    case 3:
+      arquivoTexto = fopen("../../PROVAO_DESCENDENTE.txt", "r");
+      break;
+  }
+  if (arquivoTexto == NULL) {
+    printf("Erro ao abrir o arquivo de texto na situação %d!\n", situacao);
+    exit(1);
+  }
+  return arquivoTexto;
+}
+
+void fecharArquivoTexto(FILE *arquivoTexto) {
+  fclose(arquivoTexto);
+}
+
+void imprimirArquivoTexto(FILE *arquivoTexto, int registros) {
+  char linha[100];
+  for (int i = 0; i < registros; i++) {
+    fgets(linha, 100, arquivoTexto);
+    printf("%s", linha);
+  }
+}

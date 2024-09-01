@@ -3,11 +3,11 @@
 
 int main() {
 
-  printf("Iniciando testes unitários...\n");
+  printf("\033[0;32mIniciando testes unitários...\n\033[0m");
 
   testar_processarEntrada();
 
-  printf("Todos os testes passaram");
+  printf("\033[0;32mTodos os testes passaram\n\033[0m");
 
   return 0;
 }

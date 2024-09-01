@@ -40,3 +40,20 @@ void testar_processarEntrada() {
   char *argv9[] = {"./ordena", "1", "10", "0", "-p"};
   assert(processarEntrada(&entrada, 5, argv9) == false);
 }
+
+void testar_abrirArquivoTexto() {
+  // Testar abertura de arquivo com situacao 1
+  FILE *arquivoTexto = abrirArquivoTexto(1);
+  assert(arquivoTexto != NULL);
+  fecharArquivoTexto(arquivoTexto);
+
+  // Testar abertura de arquivo com situacao 2
+  arquivoTexto = abrirArquivoTexto(2);
+  assert(arquivoTexto != NULL);
+  fecharArquivoTexto(arquivoTexto);
+
+  // Testar abertura de arquivo com situacao 3
+  arquivoTexto = abrirArquivoTexto(3);
+  assert(arquivoTexto != NULL);
+  fecharArquivoTexto(arquivoTexto);
+}

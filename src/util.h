@@ -2,6 +2,7 @@
 #define UTIL_H
 
 #include <stdbool.h>
+#include <stdio.h>
 
 /**
  * @brief Estrutura de dados que armazena os argumentos passados na linha de comando.
@@ -25,12 +26,37 @@ typedef struct {
   double tempo;
 } Metrica;
 
-/**
- * @brief Faz a leitura dos argumentos passados na linha de comando e verifica se são válidos.
- * 
- * @return true Se todos os argumentos são válidos.
- * @return false Se algum argumento é inválido.
- */
-bool processarEntrada(Entrada *, int, char *[]);
+ /**
+  * @brief Faz a leitura dos argumentos passados na linha de comando e verifica se são válidos.
+  * 
+  * @param entrada Estrutura de dados que armazena os argumentos passados na linha de comando.
+  * @param argc Quantidade de argumentos passados na linha de comando.
+  * @param argv Argumentos passados na linha de comando.
+  * @return true Se os argumentos são válidos.
+  * @return false Se os argumentos são inválidos.
+  */
+bool processarEntrada(Entrada *entrada, int argc, char *argv[]);
 
+/**
+  * @brief Abre um arquivo de texto com base na situação passada.
+  *
+  * @param situacao Situação do arquivo de texto.
+  * @return FILE* Arquivo de texto aberto.
+ */
+FILE *abrirArquivoTexto(int situacao);
+
+/**
+ * @brief Fecha um arquivo de texto.
+ * 
+ * @param arquivoTexto Arquivo de texto a ser fechado.
+ */
+void fecharArquivoTexto(FILE * arquivoTexto);
+
+/**
+ * @brief Imprime o conteúdo de um arquivo de texto. 
+ * 
+ * @param arquivoTexto Arquivo de texto a ser impresso.
+ * @param registros Quantidade de registros a serem impressos.
+ */
+void imprimirArquivoTexto(FILE *, int);
 #endif // UTIL_H
