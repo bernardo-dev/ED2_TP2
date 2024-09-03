@@ -50,15 +50,15 @@ bool processarEntrada(Entrada *entrada, int argc, char *argv[]) {
 FILE *abrirArquivoTexto(int situacao) {
   FILE *arquivoTexto = NULL;
   switch (situacao) {
-    case 1:
-      arquivoTexto = fopen("../../PROVAO.txt", "r");
-      break;
-    case 2:
-      arquivoTexto = fopen("../../PROVAO_ASCENDENTE.txt", "r");
-      break;
-    case 3:
-      arquivoTexto = fopen("../../PROVAO_DESCENDENTE.txt", "r");
-      break;
+  case 1:
+    arquivoTexto = fopen("../../PROVAO_ASCENDENTE.txt", "r");
+    break;
+  case 2:
+    arquivoTexto = fopen("../../PROVAO_DESCENDENTE.txt", "r");
+    break;
+  case 3:
+    arquivoTexto = fopen("../../PROVAO.txt", "r");
+    break;
   }
   if (arquivoTexto == NULL) {
     printf("Erro ao abrir o arquivo de texto na situação %d!\n", situacao);
@@ -67,14 +67,89 @@ FILE *abrirArquivoTexto(int situacao) {
   return arquivoTexto;
 }
 
-void fecharArquivoTexto(FILE *arquivoTexto) {
-  fclose(arquivoTexto);
-}
+void fecharArquivoTexto(FILE *arquivoTexto) { fclose(arquivoTexto); }
 
 void imprimirArquivoTexto(FILE *arquivoTexto, int registros) {
-  char linha[100];
+  int tam = 200;
+  char texto[tam];
   for (int i = 0; i < registros; i++) {
-    fgets(linha, 100, arquivoTexto);
-    printf("%s", linha);
+    fgets(texto, tam, arquivoTexto);
+    printf("%s", texto);
+  }
+}
+
+FILE *abrirArquivoBinario(int situacao) {
+  FILE *arquivoBinario = NULL;
+  switch (situacao) {
+  case 1:
+    arquivoBinario = fopen("../../PROVAO_ASCENDENTE.bin", "rb");
+    break;
+  case 2:
+    arquivoBinario = fopen("../../PROVAO_DESCENDENTE.bin", "rb");
+    break;
+  case 3:
+    arquivoBinario = fopen("../../PROVAO.bin", "rb");
+    break;
+  }
+  return arquivoBinario;
+}
+
+void fecharArquivoBinario(FILE *arquivoBinario) { fclose(arquivoBinario); }
+
+void imprimirArquivoBinario(FILE *arquivoBinario, int registros) {
+  Registro registro;
+  for (int i = 0; i < registros; i++) {
+    fread(&registro, sizeof(Registro), 1, arquivoBinario);
+    printf("%08lu %05.1lf %2s %-50s %s\n", registro.numeroInscricao,
+           registro.nota, registro.estado, registro.cidade, registro.curso);
+  }
+}
+
+void converterParaBinario(FILE *arquivoTexto, int situacao) {
+  FILE *arquivoBinario = NULL;
+  switch (situacao) {
+  case 1:
+    arquivoBinario = fopen("../../PROVAO_ASCENDENTE.bin", "wb");
+    break;
+  case 2:
+    arquivoBinario = fopen("../../PROVAO_DESCENDENTE.bin", "wb");
+    break;
+  case 3:
+    arquivoBinario = fopen("../../PROVAO.bin", "wb");
+    break;
+  }
+
+  Registro registro;
+
+  // Leitura do arquivo de texto e escrita no arquivo binario
+  while (fscanf(arquivoTexto, "%8lu %5lf %2s %50[A-Z'\\ -] %30s",
+                &registro.numeroInscricao, &registro.nota, registro.estado,
+                registro.cidade, registro.curso) != EOF) {
+    fwrite(&registro, sizeof(Registro), 1, arquivoBinario);
+    // Passa para a proxima linha do arquivoentrada.
+    while (fgetc(arquivoTexto) != '\n')
+      ;
+  }
+
+  fclose(arquivoBinario);
+}
+
+void processarArquivo(int situacao) {
+  FILE *arquivoBinario = NULL;
+  FILE *arquivoTexto = NULL;
+
+  // Tenta abrir o arquivo binario
+  arquivoBinario = abrirArquivoBinario(situacao);
+
+  // Se nao tiver o arquivo binario tenta abrir o arquivo texto e converter
+  if (arquivoBinario == NULL) {
+    printf("Erro ao abrir o arquivo binário na situação %d!\n", situacao);
+    printf("Tentando converter arquivo de texto...\n");
+    arquivoTexto = abrirArquivoTexto(situacao);
+
+    converterParaBinario(arquivoTexto, situacao);
+    fecharArquivoTexto(arquivoTexto);
+  } else {
+    fecharArquivoBinario(arquivoBinario);
   }
 }
