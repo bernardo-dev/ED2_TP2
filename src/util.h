@@ -28,6 +28,11 @@ typedef struct {
   char curso[31];
 } Registro;
 
+typedef struct {
+  Registro reg;
+  int fita;
+} ItemFita;
+
 /**
  * @brief Estrutura de dados que armazena as métricas de um algoritmo de
  * ordenação.

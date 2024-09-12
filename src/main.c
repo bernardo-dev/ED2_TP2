@@ -1,5 +1,6 @@
 #include "util.h"
 #include <stdio.h>
+#include "intercalacaoInterna.h"
 
 int main(int argc, char *argv[]) {
   Entrada entrada;
@@ -29,12 +30,16 @@ int main(int argc, char *argv[]) {
     imprimirArquivoBinario(arquivoBinario, entrada.registros);
   }
 
+  fecharArquivoBinario(arquivoBinario);
+  fecharArquivoTexto(arquivoTexto);
+
   // Chama a função de ordenação
   // As funcoes de ordenacao devem ordenar o arquivo binario que esta na
   // variavel 'arquivoBinario'
   switch (entrada.metodo) {
   case 1:
     // TODO: Chamar a funcao de ordenacao 2f-fitas com qualquer método de ordenação interna
+    intercalacaoInterna(arquivoBinario, entrada);
     break;
   case 2:
     // TODO: Chamar a funcao de ordenacao 2f-fitas com a tecnica de selecao por substituicao
