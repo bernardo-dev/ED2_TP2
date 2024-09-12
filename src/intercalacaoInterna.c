@@ -9,13 +9,13 @@ typedef struct {
   int registros;
 } ConteudoFita;
 
-bool tentaLerRegistro(ItemFita *memoriaInterna, FILE *fita, int tamanhoBloco) {
+bool tentaLerRegistro(ItemFita *memoriaInterna, FILE *fita, int blocoAtual, int tamanhoBloco) {
+  
   int posicao = ftell(fita);
 
   int registrosLidos = posicao / sizeof(Registro);
-  registrosLidos = registrosLidos % tamanhoBloco;
 
-  if (registrosLidos == tamanhoBloco) {
+  if (registrosLidos == tamanhoBloco * blocoAtual) {
     return false;
   } 
 
@@ -116,45 +116,40 @@ void intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
 
   // Etapa de intercalacao
   int tamanhoBloco = 20;
+  int blocoAtual = 1;
 
   // Inicializa o vetor de leitura
+  // Le o primeiro registro de cada fita de entrada
   i = 0;
-  int registrosLidos = 0;
   while (fread( & memoriaInterna[i].reg, sizeof(Registro), 1, fitasEntrada[i])) {
     memoriaInterna[i].fita = i;
-    registrosLidos++;
     i++;
   }
 
+  int fitaSaida = 0;
   // Enquanto houver registros na memoria interna ordena e escreve nas fitas de saida
-  while (registrosLidos > 0) {
-    quicksortInterno(memoriaInterna, 0, i - 1);
-
-    int fitaSaida = 0;
+  while (i > 0) {
+    quicksortInterno(memoriaInterna, 0, i - 1);  
 
     fwrite( & memoriaInterna[0].reg, sizeof(Registro), 1, fitasSaida[fitaSaida]);
     conteudoFitasSaida[fitaSaida].registros++;
 
     // Atualiza o contador de registros lidos
-    registrosLidos--;
+    i--;
 
-    // Le o proximo registro da fita de entrada
-    if (fread( & memoriaInterna[0].reg, sizeof(Registro), 1, fitasEntrada[memoriaInterna[0].fita])) {
-      registrosLidos++;
+    // Le o proximo registro da fita de entrada que teve o registro lido
+    if (tentaLerRegistro(memoriaInterna, fitasEntrada[memoriaInterna[0].fita], blocoAtual, tamanhoBloco)) {
+      i++;
     } else {
-      // Se a fita de entrada acabou, le o proximo registro da fita
-      // de entrada e atualiza o contador de registros lidos
-      if (fread( & memoriaInterna[0].reg, sizeof(Registro), 1, fitasEntrada[memoriaInterna[0].fita])) {
-        registrosLidos++;
+      // Move o vetor para esquerda
+      for (int j = 0; j < i; j++) {
+        memoriaInterna[j] = memoriaInterna[j + 1];
       }
     }
-  
   }
 
 
   quicksortInterno(memoriaInterna, 0, i - 1);
-
-  int fitaSaida = 0;
 
   fwrite( & memoriaInterna[0].reg, sizeof(Registro), 1, fitasSaida[fitaSaida]);
   conteudoFitasSaida[fitaSaida].registros++;
