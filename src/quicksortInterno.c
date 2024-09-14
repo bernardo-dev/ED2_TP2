@@ -2,20 +2,24 @@
 #include "util.h"
 
 // Retorna a mediana de 3 valores
-int medianaDeTres(double a, double b, double c) {
+int medianaDeTres(ItemFita *vetor, int esq, int dir) {
+  double a = vetor[esq].reg.nota;
+  double b = vetor[(esq + dir) / 2].reg.nota;
+  double c = vetor[dir].reg.nota;
+
   if (a >= b && a <= c) {
-    return a;
+    return esq; // Se a e a mediana
   }
   if (b >= a && b <= c) {
-    return b;
+    return (esq + dir) / 2; // Se b e a mediana
   }
-  return c;
+  return dir; // Se c e a mediana
 }
 
 // Particiona o vetor e retorna o indice do pivo
 int particao(ItemFita *vetor, int esq, int dir) {
   // Escolhendo o pivo com a mediana de 3
-  int p = medianaDeTres(vetor[esq].reg.nota, vetor[(esq + esq) / 2].reg.nota, vetor[dir].reg.nota);
+  int p = medianaDeTres(vetor, esq, dir);
   ItemFita pivo = vetor[p];
 
   int i = esq;

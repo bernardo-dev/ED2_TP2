@@ -30,8 +30,9 @@ int main(int argc, char *argv[]) {
     imprimirArquivoBinario(arquivoBinario, entrada.registros);
   }
 
-  fecharArquivoBinario(arquivoBinario);
-  fecharArquivoTexto(arquivoTexto);
+  // Retorna o ponteiro do arquivo para o inicio depois da impressao
+  fseek(arquivoBinario, 0, SEEK_SET);
+  fseek(arquivoTexto, 0, SEEK_SET);
 
   // Chama a função de ordenação
   // As funcoes de ordenacao devem ordenar o arquivo binario que esta na

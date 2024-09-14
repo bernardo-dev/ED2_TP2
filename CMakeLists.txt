@@ -20,11 +20,21 @@ set(BIN_DIR bin)
 # Define o diretorio de saida do executavel
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../${BIN_DIR}/${CMAKE_BUILD_TYPE})
 
+# Define o diretorio de saida dos arquivos temporarios de fitas
+set(FITAS_DIR "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/fitas")
+
+# Adiciona um target para limpar os arquivos temporarios de fitas
+add_custom_target(clean-all
+    COMMAND ${CMAKE_BUILD_TOOL} clean
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${FITAS_DIR}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${FITAS_DIR}
+)
+
 # Especifica os arquivos fonte para executavel principal
-set(SOURCE_FILES
-    ${SRC_DIR}/main.c
-    ${SRC_DIR}/util.c
-    ${SRC_DIR}/util.h
+# # tudo que estiver dentro do diretorio src
+file(GLOB SOURCE_FILES
+    ${SRC_DIR}/*.c
+    ${SRC_DIR}/*.h
 )
 
 # Adiciona o executavel

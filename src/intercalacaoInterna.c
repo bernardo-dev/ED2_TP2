@@ -30,7 +30,7 @@ void intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
   const int tamanhoMemoriaInterna = 20;
   const int quantidadeFitas = 20;
 
-  Registro registrosAux[tamanhoMemoriaInterna];
+  Registro registrosAux[tamanhoMemoriaInterna]; // Vetor auxiliar para ordenacao
   ItemFita memoriaInterna[tamanhoMemoriaInterna];
   FILE *fitasEntrada[quantidadeFitas];
   FILE *fitasSaida[quantidadeFitas];
@@ -85,9 +85,12 @@ void intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
 
     // Quantidade de registros lidos com sucesso
     int registrosLidos =
-        fread(memoriaInterna, sizeof(Registro), quantidade, arquivoBinario);
+        fread(registrosAux, sizeof(Registro), quantidade, arquivoBinario);
 
-    
+    // Passa os registros do vetor de Registros para o vetor de ItemFita
+    for (int j = 0; j < registrosLidos; j++) {
+      memoriaInterna[j].reg = registrosAux[j];
+    }
 
     // Ordena os registros
     quicksortInterno(memoriaInterna, 0, registrosLidos - 1);
