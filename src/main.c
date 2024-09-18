@@ -17,22 +17,15 @@ int main(int argc, char *argv[]) {
   processarArquivo(entrada.situacao);
 
   arquivoBinario = abrirArquivoBinario(entrada.situacao);
-  arquivoTexto = abrirArquivoTexto(entrada.situacao);
 
   // Se a entrada tem a flag opcional, imprime o arquivo texto
-  // TODO: Lembrar de tirar deixar apenas uma impressao (ou texto ou binario)
   if (entrada.opcional) {
-    printf("Arquivo de texto:\n");
-    imprimirArquivoTexto(arquivoTexto, entrada.registros);
-    printf("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-="
-           "-=-=-=-=-=-=-=-=-=-=\n");
-    printf("Arquivo Binário:\n");
+    printf("Arquivo binário ANTES da ordenação:\n");
     imprimirArquivoBinario(arquivoBinario, entrada.registros);
   }
 
   // Retorna o ponteiro do arquivo para o inicio depois da impressao
   fseek(arquivoBinario, 0, SEEK_SET);
-  fseek(arquivoTexto, 0, SEEK_SET);
 
   // Chama a função de ordenação
   // As funcoes de ordenacao devem ordenar o arquivo binario que esta na
@@ -50,8 +43,13 @@ int main(int argc, char *argv[]) {
     break;
   }
 
+  // Se a entrada tem a flag opcional, imprime o arquivo texto
+  if (entrada.opcional) {
+    printf("Arquivo binário DEPOIS da ordenação:\n");
+    //imprimirArquivoBinario(arquivoBinario, entrada.registros);
+  }
+
   // Fecha os arquivos
-  fecharArquivoTexto(arquivoTexto);
   fecharArquivoBinario(arquivoBinario);
   return 0;
 }

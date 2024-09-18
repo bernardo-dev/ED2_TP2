@@ -1,66 +1,76 @@
 #include "quicksortInterno.h"
 #include "util.h"
 
-// Retorna a mediana de 3 valores
-int medianaDeTres(ItemFita *vetor, int esq, int dir) {
-  double a = vetor[esq].reg.nota;
-  double b = vetor[(esq + dir) / 2].reg.nota;
-  double c = vetor[dir].reg.nota;
-
-  if (a >= b && a <= c) {
-    return esq; // Se a e a mediana
-  }
-  if (b >= a && b <= c) {
-    return (esq + dir) / 2; // Se b e a mediana
-  }
-  return dir; // Se c e a mediana
+void trocar(ItemFita *vetor, int i, int j) {
+  ItemFita temp = vetor[i];
+  vetor[i] = vetor[j];
+  vetor[j] = temp;
 }
 
 // Particiona o vetor e retorna o indice do pivo
-int particao(ItemFita *vetor, int esq, int dir) {
-  // Escolhendo o pivo com a mediana de 3
-  int p = medianaDeTres(vetor, esq, dir);
-  ItemFita pivo = vetor[p];
+int particao(ItemFita *vetor, int inicio, int fim) {
+  // Escolhendo o pivo com a mediana de 3, inicio meio e fim
+  int meio = (inicio + fim) / 2;
 
-  int i = esq;
-  int j = dir;
+  ItemFita a = vetor[inicio];
+  ItemFita b = vetor[meio];
+  ItemFita c = vetor[fim];
 
-  while (i < j) {
-    // Encontra o primeiro elemento maior que o pivo (do inicio para o fim)
-    while (vetor[i].reg.nota <= pivo.reg.nota && i <= dir - 1) {
-      i++;
+  int indiceMediana = 0;
+
+  if (a.reg.nota < b.reg.nota) {
+    if (b.reg.nota < c.reg.nota) {
+      indiceMediana = meio;
+    } else {
+      if (a.reg.nota < c.reg.nota) {
+        indiceMediana = fim;
+      } else {
+        indiceMediana = inicio;
+      }
     }
-
-    // Encontra o primeiro elemento menor que o pivo (do fim para o inicio)
-    while (vetor[j].reg.nota > pivo.reg.nota && j >= esq + 1) {
-      j--;
-    }
-
-    if (i < j) {
-      ItemFita temp = vetor[i];
-      vetor[i] = vetor[j];
-      vetor[j] = temp;
-      i++;
-      j--;
+  } else {
+    if (c.reg.nota < b.reg.nota) {
+      indiceMediana = meio;
+    } else {
+      if (c.reg.nota < a.reg.nota) {
+        indiceMediana = fim;
+      } else {
+        indiceMediana = inicio;
+      }
     }
   }
-  
-  // Troca o pivo com o elemento na posicao j
-  ItemFita temp = vetor[p];
-  vetor[p] = vetor[j];
-  vetor[j] = temp;
 
-  return j;
+  // Coloca o elemento da mediana no fim
+  trocar(vetor, indiceMediana, fim);
+
+  // O pivo é o elemento final
+  ItemFita pivo = vetor[fim];
+  int i = inicio - 1;
+  int j;
+
+  // Varre o vetor da esquerda para a direita procurando os elementos que sao
+  // menores ou iguais que o pivo.
+  // esses elementos sao colocados na particao da esquerda
+  for (j = inicio; j < fim; j++) {
+    if (vetor[j].reg.nota <= pivo.reg.nota) {
+      i++;
+      trocar(vetor, i, j);
+    }
+  }
+
+  // coloca o pivo na posicao de ordenacao
+  trocar(vetor, i + 1, fim);
+  return i + 1; // retorna a posicao do pivo
 }
 
 // Ordena o vetor usando o quicksort
-void quicksortInterno(ItemFita *vetor, int l, int r) {
-  if (l < r) {
+void quicksortInterno(ItemFita *vetor, int esq, int dir) {
+  if (esq < dir) {
     // Particiona o vetor e obtem o indice do pivo
-    int p = particao(vetor, l, r);
+    int p = particao(vetor, esq, dir);
 
     // Ordena os elementos antes e depois da particao
-    quicksortInterno(vetor, l, p + 1);
-    quicksortInterno(vetor, p + 1, r);
+    quicksortInterno(vetor, esq, p - 1);
+    quicksortInterno(vetor, p + 1, dir);
   }
 }
