@@ -136,9 +136,9 @@ void criacaoDosBlocos(Entrada entrada, int quantidadeFitas,
 }
 
 int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
-                           FILE **fitasEntrada, FILE **fitasSaida,
-                           ConteudoFita *conteudoFitasEntrada,
-                           ConteudoFita *conteudoFitasSaida) {
+                          FILE **fitasEntrada, FILE **fitasSaida,
+                          ConteudoFita *conteudoFitasEntrada,
+                          ConteudoFita *conteudoFitasSaida) {
   // Variaveis auxiliares
   int blocoAtual = 1; // Qual bloco esta sendo intercalado
   int saidaAtual = 0; // Qual fita de saida esta sendo utilizada
@@ -252,14 +252,14 @@ int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
   if (alternancia) {
     // se a ultima intercalacao foi de saida para entrada
     // entao o arquivo ordenado esta na primeira fita de saida
-    return 20; 
+    return 20;
   }
   // se a ultima intercalacao foi de entrada para saida
   // entao o arquivo ordenado esta na primeira fita de entrada
   return 0;
 }
 
-void intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
+int intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
   // Constantes
   const int tamanhoMemoriaInterna = 20;
   const int quantidadeFitas = 20;
@@ -298,7 +298,7 @@ void intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
 
   // se apenas uma fita de entrada foi utilizada, o arquivo ja esta ordenado
   if (conteudoFitasEntrada[1].blocos == 0) {
-    return;
+    return 0;
   }
 
   // Volta para o inicio do arquivo binario de cada fita de entrada
@@ -306,12 +306,16 @@ void intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
     fseek(fitasEntrada[i], 0, SEEK_SET);
   }
 
-  intercalacaoDosBlocos(quantidadeFitas, memoriaInterna, fitasEntrada,
-                        fitasSaida, conteudoFitasEntrada, conteudoFitasSaida);
+  int fitaOrdenada;
+  fitaOrdenada = intercalacaoDosBlocos(
+      quantidadeFitas, memoriaInterna, fitasEntrada, fitasSaida,
+      conteudoFitasEntrada, conteudoFitasSaida);
 
   // Fecha as fitas de entrada e saida
   for (int i = 0; i < quantidadeFitas; i++) {
     fclose(fitasEntrada[i]);
     fclose(fitasSaida[i]);
   }
+
+  return fitaOrdenada;
 }

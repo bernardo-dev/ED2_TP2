@@ -6,7 +6,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/Debug/ordena",
-      "args": ["1", "10", "3", "-P"],
+      "args": ["1", "471705", "3", "-P", ">", "saida.txt"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/bin/Debug",
       "environment": [],

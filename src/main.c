@@ -1,11 +1,12 @@
+#include "intercalacaoInterna.h"
 #include "util.h"
 #include <stdio.h>
-#include "intercalacaoInterna.h"
 
 int main(int argc, char *argv[]) {
   Entrada entrada;
-  FILE *arquivoTexto = NULL;
   FILE *arquivoBinario = NULL;
+  FILE *arquivoBinarioOrdenado = NULL;
+  int fitaOrdenada = 0;
 
   // Processa a entrada do terminal
   if (!processarEntrada(&entrada, argc, argv)) {
@@ -32,24 +33,32 @@ int main(int argc, char *argv[]) {
   // variavel 'arquivoBinario'
   switch (entrada.metodo) {
   case 1:
-    // TODO: Chamar a funcao de ordenacao 2f-fitas com qualquer método de ordenação interna
-    intercalacaoInterna(arquivoBinario, entrada);
+    // TODO: Chamar a funcao de ordenacao 2f-fitas com qualquer método de
+    // ordenação interna
+    fitaOrdenada = intercalacaoInterna(arquivoBinario, entrada);
     break;
   case 2:
-    // TODO: Chamar a funcao de ordenacao 2f-fitas com a tecnica de selecao por substituicao
+    // TODO: Chamar a funcao de ordenacao 2f-fitas com a tecnica de selecao por
+    // substituicao
     break;
   case 3:
     // TODO: Chamar a funcao de orenacao quicksortExterno
     break;
   }
 
-  // Se a entrada tem a flag opcional, imprime o arquivo texto
+  // TODO: Alterar isso depois para aceitar os outros metodos tambem, por
+  // enquanto aceita apenas o metodo 1 Se a entrada tem a flag opcional, imprime
+  // o arquivo binario ordenado
   if (entrada.opcional) {
+    char nomeFita[50];
+    sprintf(nomeFita, "fitas/fita%d.dat", fitaOrdenada);
+    arquivoBinarioOrdenado = fopen(nomeFita, "rb");
     printf("Arquivo binário DEPOIS da ordenação:\n");
-    //imprimirArquivoBinario(arquivoBinario, entrada.registros);
+    imprimirArquivoBinario(arquivoBinarioOrdenado, entrada.registros);
   }
 
   // Fecha os arquivos
   fecharArquivoBinario(arquivoBinario);
+  fecharArquivoBinario(arquivoBinarioOrdenado);
   return 0;
 }

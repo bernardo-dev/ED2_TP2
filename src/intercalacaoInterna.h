@@ -8,6 +8,6 @@ typedef struct {
   int registros;
 } ConteudoFita;
 
-void intercalacaoInterna(FILE *, Entrada);
+int intercalacaoInterna(FILE *, Entrada);
 
 #endif // INTERCALACAOINTERNA_H
