@@ -1,5 +1,6 @@
 #include "intercalacaoInterna.h"
 #include "quicksortExterno.h"
+#include "intercalacao.h"
 #include "util.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,6 +35,10 @@ int main(int argc, char *argv[]) {
 
   // Retorna o ponteiro do arquivo para o inicio depois da impressao
   fseek(arquivoBinario, 0, SEEK_SET);
+
+  /*VARIAVEIS DE METRICA METODO 2*/
+  int numeroDeLeituras = 0, numeroDeEscritas = 0, numeroDeComparacoesEntreValores = 0;
+  clock_t tempoInicialDeExecucao = clock(), tempoTotalDeExecucao;
 
   /* VARIAVEIS AUXILIARES DO METODO 1 */
   char novoNomeArquivo[50];
@@ -73,8 +78,7 @@ int main(int argc, char *argv[]) {
     system("rm fitas/fita*");
     break;
   case 2:
-    // TODO: Chamar a funcao de ordenacao 2f-fitas com a tecnica de selecao por
-    // substituicao
+    intercalacao(entrada, arquivoBinario, &numeroDeLeituras, &numeroDeEscritas, &numeroDeComparacoesEntreValores);
     break;
   case 3:
     CopiaAlunosParaOrdenar(entrada, arquivoBinario);
@@ -84,6 +88,8 @@ int main(int argc, char *argv[]) {
     } else {
       printf("Algo deu errado!\n");
     }
+
+    tempoTotalDeExecucao = clock() - tempoInicialDeExecucao;
 
     // Imprime as metricas
     printf("\n");
@@ -122,6 +128,11 @@ int main(int argc, char *argv[]) {
 
     fclose(arquivoBinarioOrdenado);
   }
+
+    printf("\n\t> Numero total de leituras da memoria externa para a interna: %d vezes!\n", numeroDeLeituras);
+    printf("\n\t> Numero total de escritas da memoria interna para a externa: %d vezes!\n", numeroDeEscritas);
+    printf("\n\t> Numero total de comparacoes entre os valores: %d vezes!\n", numeroDeComparacoesEntreValores);
+    printf("\n\t> Tempo de execucao: %.4lf segundos!\n\n", tempoTotalDeExecucao / 1000.0);
 
   // Fecha os arquivos
   fecharArquivoBinario(arquivoBinario);
