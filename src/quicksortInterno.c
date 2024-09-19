@@ -8,7 +8,7 @@ void trocar(ItemFita *vetor, int i, int j) {
 }
 
 // Particiona o vetor e retorna o indice do pivo
-int particao(ItemFita *vetor, int inicio, int fim) {
+int particao(ItemFita *vetor, int inicio, int fim, Metrica *metrica) {
   // Escolhendo o pivo com a mediana de 3, inicio meio e fim
   int meio = (inicio + fim) / 2;
 
@@ -18,23 +18,36 @@ int particao(ItemFita *vetor, int inicio, int fim) {
 
   int indiceMediana = 0;
 
+  // Metrica *metrica;
+  metrica->comparacoes = 0;
+
   if (a.reg.nota < b.reg.nota) {
+    metrica->comparacoes++;
     if (b.reg.nota < c.reg.nota) {
+      metrica->comparacoes++;
       indiceMediana = meio;
     } else {
+      metrica->comparacoes++;
       if (a.reg.nota < c.reg.nota) {
+        metrica->comparacoes++;
         indiceMediana = fim;
       } else {
+        metrica->comparacoes++;
         indiceMediana = inicio;
       }
     }
   } else {
+    metrica->comparacoes++;
     if (c.reg.nota < b.reg.nota) {
+      metrica->comparacoes++;
       indiceMediana = meio;
     } else {
+      metrica->comparacoes++;
       if (c.reg.nota < a.reg.nota) {
+        metrica->comparacoes++;
         indiceMediana = fim;
       } else {
+        metrica->comparacoes++;
         indiceMediana = inicio;
       }
     }
@@ -52,6 +65,7 @@ int particao(ItemFita *vetor, int inicio, int fim) {
   // menores ou iguais que o pivo.
   // esses elementos sao colocados na particao da esquerda
   for (j = inicio; j < fim; j++) {
+    metrica->comparacoes++;
     if (vetor[j].reg.nota <= pivo.reg.nota) {
       i++;
       trocar(vetor, i, j);
@@ -64,13 +78,13 @@ int particao(ItemFita *vetor, int inicio, int fim) {
 }
 
 // Ordena o vetor usando o quicksort
-void quicksortInterno(ItemFita *vetor, int esq, int dir) {
+void quicksortInterno(ItemFita *vetor, int esq, int dir, Metrica metrica) {
   if (esq < dir) {
     // Particiona o vetor e obtem o indice do pivo
-    int p = particao(vetor, esq, dir);
+    int p = particao(vetor, esq, dir, &metrica);
 
     // Ordena os elementos antes e depois da particao
-    quicksortInterno(vetor, esq, p - 1);
-    quicksortInterno(vetor, p + 1, dir);
+    quicksortInterno(vetor, esq, p - 1, metrica);
+    quicksortInterno(vetor, p + 1, dir, metrica);
   }
 }

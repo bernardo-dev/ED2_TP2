@@ -7,6 +7,7 @@ int main(int argc, char *argv[]) {
   FILE *arquivoBinario = NULL;
   FILE *arquivoBinarioOrdenado = NULL;
   int fitaOrdenada = 0;
+  Metrica metrica;
 
   // Processa a entrada do terminal
   if (!processarEntrada(&entrada, argc, argv)) {
@@ -35,7 +36,11 @@ int main(int argc, char *argv[]) {
   case 1:
     // TODO: Chamar a funcao de ordenacao 2f-fitas com qualquer método de
     // ordenação interna
-    fitaOrdenada = intercalacaoInterna(arquivoBinario, entrada);
+    fitaOrdenada = intercalacaoInterna(arquivoBinario, entrada, &metrica);
+    // Imprime as metricas
+    printf("\033[1;32mMetricas - Intercalação de ordenação interna\033[0m\n");
+    imprimirMetricas(metrica);
+    printf("\n");
     break;
   case 2:
     // TODO: Chamar a funcao de ordenacao 2f-fitas com a tecnica de selecao por

@@ -1,6 +1,8 @@
 #ifndef UTIL_H
 #define UTIL_H
 
+// #include <cstddef>
+#include <time.h>
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -39,9 +41,10 @@ typedef struct {
  *
  */
 typedef struct {
-  unsigned long int leituras;
-  unsigned long int escritas;
-  unsigned long int comparacoes;
+  unsigned int leituras;
+  unsigned int escritas;
+  unsigned int comparacoes;
+  clock_t inicio, fim;
   double tempo;
 } Metrica;
 
@@ -121,4 +124,8 @@ void converterParaBinario(FILE *, int);
  * @return FILE* Arquivo binário aberto.
  */
 void processarArquivo(int situacao);
+
+// Imprimir metricas
+void imprimirMetricas(Metrica);
+
 #endif // UTIL_H

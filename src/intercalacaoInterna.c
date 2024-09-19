@@ -21,7 +21,9 @@ void abrirFitas(FILE *fitasEntrada[], FILE *fitasSaida[], int quantidadeFitas) {
 }
 
 bool tentaLerRegistro(ItemFita *memoriaInterna, FILE *fita, int blocoAtual,
-                      int tamanhoBloco, ConteudoFita *conteudoFita) {
+                      int tamanhoBloco, ConteudoFita *conteudoFita, Metrica *metrica) {
+  // Metrica *metrica;
+  metrica->leituras = 0;
 
   // Posicao contem o numero de registros lidos ate o momento
   int posicao = ftell(fita) / sizeof(Registro);
@@ -38,6 +40,7 @@ bool tentaLerRegistro(ItemFita *memoriaInterna, FILE *fita, int blocoAtual,
 
   // Le o registro
   fread(&memoriaInterna[0].reg, sizeof(Registro), 1, fita);
+  metrica->leituras++;
 
   // Atualiza o conteudo da fita lida
   posicao = ftell(fita) / sizeof(Registro);
@@ -85,8 +88,11 @@ void atualizarQuantidadeBlocos(ConteudoFita *conteudoFita, int tamanhoBloco) {
 void criacaoDosBlocos(Entrada entrada, int quantidadeFitas,
                       int tamanhoMemoriaInterna, ItemFita *memoriaInterna,
                       FILE *arquivoBinario, FILE **fitasEntrada,
-                      ConteudoFita *conteudoFitasEntrada) {
+                      ConteudoFita *conteudoFitasEntrada, Metrica *metrica) {
   // Variaveis auxiliares
+  // Metrica metrica;
+  metrica->leituras = 0;
+  metrica->escritas = 0;
   Registro registrosAux[tamanhoMemoriaInterna]; // Vetor auxiliar para ordenacao
 
   // Particiona o arquivo de entrada
@@ -108,6 +114,7 @@ void criacaoDosBlocos(Entrada entrada, int quantidadeFitas,
     // Quantidade de registros lidos com sucesso
     int registrosLidos =
         fread(registrosAux, sizeof(Registro), quantidade, arquivoBinario);
+        metrica->leituras++;
 
     // Passa os registros do vetor de Registros para o vetor de ItemFita
     for (int j = 0; j < registrosLidos; j++) {
@@ -115,13 +122,14 @@ void criacaoDosBlocos(Entrada entrada, int quantidadeFitas,
     }
 
     // Ordena os registros
-    quicksortInterno(memoriaInterna, 0, registrosLidos - 1);
+    quicksortInterno(memoriaInterna, 0, registrosLidos - 1, *metrica);
 
     // Escreve os registros ordenados nas fitas de entrada
     for (int j = 0; j < registrosLidos; j++) {
       registrosAux[j] = memoriaInterna[j].reg;
     }
     fwrite(registrosAux, sizeof(Registro), registrosLidos, fitasEntrada[i]);
+    metrica->escritas += registrosLidos;
 
     // Atualiza a quantidade de blocos e registros na fita de entrada
     conteudoFitasEntrada[i].blocos++;
@@ -138,13 +146,15 @@ void criacaoDosBlocos(Entrada entrada, int quantidadeFitas,
 int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
                           FILE **fitasEntrada, FILE **fitasSaida,
                           ConteudoFita *conteudoFitasEntrada,
-                          ConteudoFita *conteudoFitasSaida) {
+                          ConteudoFita *conteudoFitasSaida, Metrica *metrica) {
   // Variaveis auxiliares
   int blocoAtual = 1; // Qual bloco esta sendo intercalado
   int saidaAtual = 0; // Qual fita de saida esta sendo utilizada
   int tamanhoBlocoEntrada = 20;
   int tamanhoBlocoSaida = 400; // A primeira intercalacao tera 400 registros
   int registrosNaMemoriaInterna = 0;
+  // Metrica metrica;
+  metrica->escritas = 0;
 
   // Variaveis auxiliares para alternar entre as fitas de entrada e saida
   FILE **entrada = fitasEntrada;
@@ -164,7 +174,7 @@ int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
       // Leitura do primeiro registro de cada fita de entrada
       for (int i = 0; i < quantidadeFitas; i++) {
         if (tentaLerRegistro(&memoriaInterna[i], entrada[i], blocoAtual,
-                             tamanhoBlocoEntrada, &conteudoEntrada[i])) {
+                             tamanhoBlocoEntrada, &conteudoEntrada[i], metrica)) {
           registrosNaMemoriaInterna++;
           memoriaInterna[i].fita = i;
         }
@@ -178,9 +188,10 @@ int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
       // Executa um laco de repeticao até terminar de intercalar um bloco de
       // cada fita
       while (registrosNaMemoriaInterna > 0) {
-        quicksortInterno(memoriaInterna, 0, registrosNaMemoriaInterna - 1);
+        quicksortInterno(memoriaInterna, 0, registrosNaMemoriaInterna - 1, *metrica);
 
         fwrite(&memoriaInterna[0].reg, sizeof(Registro), 1, saida[saidaAtual]);
+        metrica->escritas++;
         conteudoSaida[saidaAtual].registros++;
         // Atualiza a quantidade de blocos
         atualizarQuantidadeBlocos(&conteudoSaida[saidaAtual],
@@ -198,7 +209,7 @@ int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
         // Le o proximo registro da fita de entrada que teve o registro lido
         if (tentaLerRegistro(memoriaInterna, entrada[memoriaInterna[0].fita],
                              blocoAtual, tamanhoBlocoEntrada,
-                             &conteudoEntrada[memoriaInterna[0].fita])) {
+                             &conteudoEntrada[memoriaInterna[0].fita], metrica)) {
           registrosNaMemoriaInterna++;
         } else {
           // Move o vetor para esquerda
@@ -259,10 +270,11 @@ int intercalacaoDosBlocos(int quantidadeFitas, ItemFita *memoriaInterna,
   return 0;
 }
 
-int intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
+int intercalacaoInterna(FILE *arquivoBinario, Entrada entrada, Metrica *metrica) {
   // Constantes
   const int tamanhoMemoriaInterna = 20;
   const int quantidadeFitas = 20;
+  metrica->inicio = clock();
 
   // Variaveis auxiliares
   ItemFita memoriaInterna[tamanhoMemoriaInterna];
@@ -294,7 +306,7 @@ int intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
   // Cria os blocos ordenados nas fitas de entrada
   criacaoDosBlocos(entrada, quantidadeFitas, tamanhoMemoriaInterna,
                    memoriaInterna, arquivoBinario, fitasEntrada,
-                   conteudoFitasEntrada);
+                   conteudoFitasEntrada, metrica);
 
   // se apenas uma fita de entrada foi utilizada, o arquivo ja esta ordenado
   if (conteudoFitasEntrada[1].blocos == 0) {
@@ -309,13 +321,17 @@ int intercalacaoInterna(FILE *arquivoBinario, Entrada entrada) {
   int fitaOrdenada;
   fitaOrdenada = intercalacaoDosBlocos(
       quantidadeFitas, memoriaInterna, fitasEntrada, fitasSaida,
-      conteudoFitasEntrada, conteudoFitasSaida);
+      conteudoFitasEntrada, conteudoFitasSaida, metrica);
 
   // Fecha as fitas de entrada e saida
   for (int i = 0; i < quantidadeFitas; i++) {
     fclose(fitasEntrada[i]);
     fclose(fitasSaida[i]);
   }
+
+  metrica->fim = clock();
+  metrica->tempo =
+        (double)(metrica->fim - metrica->inicio) / CLOCKS_PER_SEC;
 
   return fitaOrdenada;
 }
