@@ -6,6 +6,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#define FF 40
+#define F 20
+
 /**
  * @brief Estrutura de dados que armazena os argumentos passados na linha de
  * comando.
