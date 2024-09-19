@@ -18,36 +18,28 @@ int particao(ItemFita *vetor, int inicio, int fim, Metrica *metrica) {
 
   int indiceMediana = 0;
 
-  // Metrica *metrica;
-  metrica->comparacoes = 0;
-
+  metrica->comparacoes++;
   if (a.reg.nota < b.reg.nota) {
     metrica->comparacoes++;
     if (b.reg.nota < c.reg.nota) {
-      metrica->comparacoes++;
       indiceMediana = meio;
     } else {
       metrica->comparacoes++;
       if (a.reg.nota < c.reg.nota) {
-        metrica->comparacoes++;
         indiceMediana = fim;
       } else {
-        metrica->comparacoes++;
         indiceMediana = inicio;
       }
     }
   } else {
     metrica->comparacoes++;
     if (c.reg.nota < b.reg.nota) {
-      metrica->comparacoes++;
       indiceMediana = meio;
     } else {
       metrica->comparacoes++;
       if (c.reg.nota < a.reg.nota) {
-        metrica->comparacoes++;
         indiceMediana = fim;
       } else {
-        metrica->comparacoes++;
         indiceMediana = inicio;
       }
     }
@@ -78,10 +70,10 @@ int particao(ItemFita *vetor, int inicio, int fim, Metrica *metrica) {
 }
 
 // Ordena o vetor usando o quicksort
-void quicksortInterno(ItemFita *vetor, int esq, int dir, Metrica metrica) {
+void quicksortInterno(ItemFita *vetor, int esq, int dir, Metrica *metrica) {
   if (esq < dir) {
     // Particiona o vetor e obtem o indice do pivo
-    int p = particao(vetor, esq, dir, &metrica);
+    int p = particao(vetor, esq, dir, metrica);
 
     // Ordena os elementos antes e depois da particao
     quicksortInterno(vetor, esq, p - 1, metrica);

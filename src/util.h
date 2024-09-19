@@ -128,4 +128,7 @@ void processarArquivo(int situacao);
 // Imprimir metricas
 void imprimirMetricas(Metrica);
 
+// Retorna o nome do arquivo de acordo com a situacao
+char *nomeArquivoSituacao(int);
+
 #endif // UTIL_H

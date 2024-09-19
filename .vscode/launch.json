@@ -6,7 +6,11 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/Debug/ordena",
-      "args": ["1", "471705", "3", "-P", ">", "saida.txt"],
+      // "args": ["1", "471705", "3", "-P", ">", "saida.txt"],
+      // quantidade: 100, 1000, 10000, 100000, 471705
+      // situaao: 1, 2, 3
+      // metodo: 1, 2, 3
+      "args": ["3", "100", "3"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}/bin/Debug",
       "environment": [],

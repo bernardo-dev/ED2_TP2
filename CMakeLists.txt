@@ -9,7 +9,7 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED False)
 
 # Define as tags de compilacao
-set(CMAKE_C_FLAGS "-Wall -Wextra -Werror")
+set(CMAKE_C_FLAGS "-Wall -Wextra")
 
 # Define o diretorio fonte
 set(SRC_DIR src)

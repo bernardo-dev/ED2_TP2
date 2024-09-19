@@ -161,3 +161,15 @@ void imprimirMetricas(Metrica metrica) {
   printf("\033[1;34mTempo: %f segundos\033[0m\n",
          (double)(metrica.fim - metrica.inicio) / CLOCKS_PER_SEC);
 }
+
+char *nomeArquivoSituacao(int situacao) {
+  switch (situacao) {
+  case 1:
+    return "PROVAO_ASCENDENTE";
+  case 2:
+    return "PROVAO_DESCENDENTE";
+  case 3:
+    return "PROVAO";
+  }
+  return "";
+}

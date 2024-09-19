@@ -3,6 +3,6 @@
 
 #include "util.h"
 
-void quicksortInterno(ItemFita *, int, int, Metrica);
+void quicksortInterno(ItemFita *, int, int, Metrica *);
 
 #endif // QUICKSORTINTERNO_H

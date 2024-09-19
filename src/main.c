@@ -1,13 +1,19 @@
 #include "intercalacaoInterna.h"
+#include "quicksortExterno.h"
 #include "util.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
   Entrada entrada;
   FILE *arquivoBinario = NULL;
   FILE *arquivoBinarioOrdenado = NULL;
-  int fitaOrdenada = 0;
+
+  // Inicializa a metrica
   Metrica metrica;
+  metrica.comparacoes = 0;
+  metrica.escritas = 0;
+  metrica.leituras = 0;
 
   // Processa a entrada do terminal
   if (!processarEntrada(&entrada, argc, argv)) {
@@ -29,41 +35,96 @@ int main(int argc, char *argv[]) {
   // Retorna o ponteiro do arquivo para o inicio depois da impressao
   fseek(arquivoBinario, 0, SEEK_SET);
 
+  /* VARIAVEIS AUXILIARES DO METODO 1 */
+  char novoNomeArquivo[50];
+  char antigoNomeArquivo[50];
+  char comando[50];
+  int fitaOrdenada = 0;
+
   // Chama a função de ordenação
   // As funcoes de ordenacao devem ordenar o arquivo binario que esta na
   // variavel 'arquivoBinario'
   switch (entrada.metodo) {
   case 1:
-    // TODO: Chamar a funcao de ordenacao 2f-fitas com qualquer método de
-    // ordenação interna
+    // Intercalacao com metodo de ordenacao visto em Estrutura de Dados 1
     fitaOrdenada = intercalacaoInterna(arquivoBinario, entrada, &metrica);
+
     // Imprime as metricas
+    printf("\n");
     printf("\033[1;32mMetricas - Intercalação de ordenação interna\033[0m\n");
     imprimirMetricas(metrica);
     printf("\n");
+
+    // Move a fita que esta ordenada para a pasta arquivosOrdenados
+    sprintf(comando, "mv fitas/fita%d.bin ../../arquivosOrdenados",
+            fitaOrdenada);
+    system(comando);
+
+    // E renomeia para o nome do arquivo original + o metodo de ordenacao + a
+    // quantidade de registros
+    sprintf(novoNomeArquivo, "../../arquivosOrdenados/%s-%d-%d.bin",
+            nomeArquivoSituacao(entrada.situacao), entrada.metodo,
+            entrada.registros);
+    sprintf(antigoNomeArquivo, "../../arquivosOrdenados/fita%d.bin",
+            fitaOrdenada);
+    rename(antigoNomeArquivo, novoNomeArquivo);
+
+    // Exclui todas as fitas
+    system("rm fitas/fita*");
     break;
   case 2:
     // TODO: Chamar a funcao de ordenacao 2f-fitas com a tecnica de selecao por
     // substituicao
     break;
   case 3:
-    // TODO: Chamar a funcao de orenacao quicksortExterno
+    CopiaAlunosParaOrdenar(entrada, arquivoBinario);
+
+    if (quickSortExterno(entrada.registros, &metrica)) {
+      // binParaTxt("Para_Ordenar.bin", "Ordenado.txt", entrada.registros);
+    } else {
+      printf("Algo deu errado!\n");
+    }
+
+    // Imprime as metricas
+    printf("\n");
+    printf("\033[1;32mMetricas - QuickSort Externo\033[0m\n");
+    imprimirMetricas(metrica);
+    printf("\n");
+
+    // Move o arquivo que esta ordenado para a pasta arquivosOrdenados
+    sprintf(comando, "mv Para_Ordenar.bin ../../arquivosOrdenados");
+    system(comando);
+
+    // E renomeia para o nome do arquivo original + o metodo de ordenacao + a
+    // quantidade de registros
+    sprintf(novoNomeArquivo, "../../arquivosOrdenados/%s-%d-%d.bin",
+            nomeArquivoSituacao(entrada.situacao), entrada.metodo,
+            entrada.registros);
+    sprintf(antigoNomeArquivo, "../../arquivosOrdenados/Para_Ordenar.bin");
+    rename(antigoNomeArquivo, novoNomeArquivo);
+    
     break;
   }
 
-  // TODO: Alterar isso depois para aceitar os outros metodos tambem, por
-  // enquanto aceita apenas o metodo 1 Se a entrada tem a flag opcional, imprime
-  // o arquivo binario ordenado
+  // Se a entrada tem a flag opcional, imprime o arquivo binario ordenado
   if (entrada.opcional) {
-    char nomeFita[50];
-    sprintf(nomeFita, "fitas/fita%d.dat", fitaOrdenada);
-    arquivoBinarioOrdenado = fopen(nomeFita, "rb");
+    char nomeArquivoOrdenado[50];
+
+    sprintf(nomeArquivoOrdenado, "../../arquivosOrdenados/%s-%d-%d.bin",
+            nomeArquivoSituacao(entrada.situacao), entrada.metodo,
+            entrada.registros);
+
+    arquivoBinarioOrdenado = fopen(nomeArquivoOrdenado, "rb");
+
     printf("Arquivo binário DEPOIS da ordenação:\n");
+
     imprimirArquivoBinario(arquivoBinarioOrdenado, entrada.registros);
+
+    fclose(arquivoBinarioOrdenado);
   }
 
   // Fecha os arquivos
   fecharArquivoBinario(arquivoBinario);
-  fecharArquivoBinario(arquivoBinarioOrdenado);
+
   return 0;
 }
